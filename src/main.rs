@@ -28,13 +28,16 @@ enum Commands {
 #[derive(Subcommand, Debug)]
 enum Methods {
     Vigenere {
+        message: String,
         key: String,
     },
     Vernam {
+        message: String,
         key: String,
     },
     Caesar {
-        shift: u8,
+        message: String,
+        shift: i8,
     },   
 }
 
@@ -77,15 +80,15 @@ impl Cryptography<&str> for Vernam {
     
 }
 
-impl Cryptography<u8> for Caesar {
-    /// Encrypt a text using the Caesar cipher using the given key
-    fn encrypt(text: &str, key: u8) -> String {
-        let mut cipher = String::new();
-        
-        return cipher;
+impl Cryptography<i8> for Caesar {
+    /// Encrypt a text using the Caesar cipher using the given shift
+    fn encrypt(text: &str, shift: i8) -> String {
+        text.chars().map(|c| rotate_char(c, shift)).collect::<String>()
     }
 
-    fn decrypt(text: &str, key: Option<u8>) -> String {
+    /// Decrypt a text using the Vigenere cipher using the given key
+    /// If not given the key, it will brute force it
+    fn decrypt(text: &str, shift: Option<i8>) -> String {
         todo!()
     }
     
@@ -117,27 +120,27 @@ fn main() {
         Commands::Encrypt { command } => {
             println!("Encrypting...");
             match command {
-                Methods::Vigenere { key } => {
-                    println!("{}", Vigenere::encrypt("text", &key));
+                Methods::Vigenere { message, key } => {
+                    println!("{}", Vigenere::encrypt(&message, &key));
                 }
-                Methods::Vernam { key } => {
-                    todo!()
+                Methods::Vernam { message, key } => {
+                    println!("{}", Vernam::encrypt(&message, &key));
                 }
-                Methods::Caesar { shift } => {
-                    todo!()
+                Methods::Caesar { message, shift } => {
+                    println!("{}", Caesar::encrypt(&message, shift));
                 }
             }
         },
         Commands::Decrypt { command } => {
             println!("Decrypting...");
             match command {
-                Methods::Vigenere { key } => {
-                    println!("{}", Vigenere::decrypt("text", Some(&key)));
+                Methods::Vigenere { message, key } => {
+                    println!("{}", Vigenere::decrypt(&message, Some(&key)));
                 }
-                Methods::Vernam { key } => {
+                Methods::Vernam { message, key } => {
                     todo!()
                 }
-                Methods::Caesar { shift } => {
+                Methods::Caesar { message, shift } => {
                     todo!()
                 }
             }
