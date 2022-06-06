@@ -91,6 +91,24 @@ impl Cryptography<u8> for Caesar {
     
 }
 
+/// Rotates a character by a given amount,
+/// if the character is not a letter, it will return the same character
+fn rotate_char(c: char, shift: i8) -> char {
+    // println!("Rotating the char: {}", c); // Change to debug
+    
+    // If the shift is negative then change it the congruent positive
+    let shift = match shift {
+        x if x < 0 => ((x % 26) + 26) as u8,
+        x => (x % 26) as u8,
+    };
+
+    // println!("Shifting {} by {}", c, shift); // Change to debug
+    match c {
+        'a'..='z' => (((c as u8) - 97 + shift) % 26 + 97) as char,
+        'A'..='Z' => (((c as u8) - 65 + shift) % 26 + 65) as char,
+        character => character,
+    }
+}
 
 fn main() {
     let args = Arguments::parse();
