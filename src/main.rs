@@ -72,7 +72,7 @@ fn main() {
                     
                 }
                 Methods::Caesar { message, shift } => {
-                    todo!()
+                    println!("{}", Caesar::decrypt(&message, shift));
                 }
             }
         },

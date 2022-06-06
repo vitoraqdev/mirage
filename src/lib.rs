@@ -22,15 +22,39 @@ impl Cryptography<i8> for Caesar {
 impl Cryptography<&str> for Vernam {
     /// Encrypt a text using the Vernam cipher using the given key
     fn encrypt(text: &str, key: &str) -> String {
-        let mut cipher = String::new();
+        // If text and key are not the same size, panic!
+        if text.split_ascii_whitespace().collect::<String>().len()
+        != key.split_ascii_whitespace().collect::<String>().len() {
+            panic!("Text and key must be the same size");
+        }
         
-        return cipher;
+        let mut key = String::from(key);
+        // Add whitespaces to the key at the same place as the text
+        text.chars().enumerate().for_each(
+            |(i, c)| {
+                if c.is_whitespace() && !key.chars().nth(i).unwrap().is_whitespace() {
+                    key.insert(i, ' ');
+                }
+            }
+        );
+        
+        // Rotate each character based on the ith key
+        text.chars().zip(key.chars()).map(|(c, k)| {
+            rotate_char(c, k.to_ascii_lowercase() as isize - 'a' as isize)
+        }).collect::<String>()
     }
 
     /// Decrypt a text using the Vernam cipher using the given key
     /// If not given the key, it will brute force it
     fn decrypt(text: &str, key: &str) -> String {
-        todo!()
+        println!("old key: {}", key);
+        println!("reduction {}", 26 - 2*(key.chars().nth(0).unwrap().to_ascii_lowercase() as isize - 'a' as isize));
+        // Calculate the negative rotation of the key
+        let key = key.chars().inspect(|c| println!("{} = {}", c, c.to_ascii_lowercase() as isize - 'a' as isize)).map(|c| 
+            rotate_char(c, 26 - 2*(c.to_ascii_lowercase() as isize - 'a' as isize)))
+            .collect::<String>();
+        println!("inverted key: {}", key);
+        Vernam::encrypt(text, &key)
     }
     
 }
