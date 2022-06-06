@@ -6,14 +6,14 @@ pub trait Cryptography<T> {
     fn decrypt(text: &str, key: T) -> String;
 }
 
-impl Cryptography<i8> for Caesar {
+impl Cryptography<isize> for Caesar {
     /// Encrypt a text using the Caesar cipher using the given shift
-    fn encrypt(text: &str, shift: i8) -> String {
+    fn encrypt(text: &str, shift: isize) -> String {
         text.chars().map(|c| rotate_char(c, shift)).collect::<String>()
     }
 
     /// Decrypt a text using the Vigenere cipher using the given key
-    fn decrypt(text: &str, shift: i8) -> String {
+    fn decrypt(text: &str, shift: isize) -> String {
         Caesar::encrypt(text, -shift)
     }
     
@@ -45,7 +45,6 @@ impl Cryptography<&str> for Vernam {
     }
 
     /// Decrypt a text using the Vernam cipher using the given key
-    /// If not given the key, it will brute force it
     fn decrypt(text: &str, key: &str) -> String {
         println!("old key: {}", key);
         println!("reduction {}", 26 - 2*(key.chars().nth(0).unwrap().to_ascii_lowercase() as isize - 'a' as isize));
@@ -78,7 +77,7 @@ impl Cryptography<&str> for Vigenere {
 
 /// Rotates a character by a given amount,
 /// if the character is not a letter, it will return the same character
-fn rotate_char(c: char, shift: i8) -> char {
+fn rotate_char(c: char, shift: isize) -> char {
     // println!("Rotating the char: {}", c); // Change to debug
     
     // If the shift is negative then change it the congruent positive

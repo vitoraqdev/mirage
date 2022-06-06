@@ -40,7 +40,7 @@ enum Methods {
     },
     Caesar {
         message: String,
-        shift: i8,
+        shift: isize,
     },   
 }
 
