@@ -69,7 +69,7 @@ fn main() {
                     println!("{}", Vigenere::decrypt(&message, &key));
                 }
                 Methods::Vernam { message, key } => {
-                    
+                    println!("{}", Vernam::decrypt(&message, &key));
                 }
                 Methods::Caesar { message, shift } => {
                     println!("{}", Caesar::decrypt(&message, shift));
@@ -79,9 +79,3 @@ fn main() {
     }
 
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    
-}  
