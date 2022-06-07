@@ -22,26 +22,49 @@ impl Cryptography<isize> for Caesar {
 impl Cryptography<&str> for Vernam {
     /// Encrypt a text using the Vernam cipher using the given key
     fn encrypt(text: &str, key: &str) -> String {
+        let text_length = text.chars().filter(|c| c.is_ascii_alphabetic()).collect::<String>().len();
+        let key_length = key.chars().filter(|c| c.is_ascii_alphabetic()).collect::<String>().len();
         // If text and key are not the same size, panic!
-        if text.split_ascii_whitespace().collect::<String>().len()
-        != key.split_ascii_whitespace().collect::<String>().len() {
-            panic!("Text and key must be the same size");
+        if text_length != key_length {
+            panic!("Text and key must be the same size, \n\
+                    text length: {}, \n\
+                    key length: {}", text_length, key_length);
         }
         
-        let mut key = String::from(key);
-        // Add whitespaces to the key at the same place as the text
-        text.chars().enumerate().for_each(
-            |(i, c)| {
-                if c.is_whitespace() && !key.chars().nth(i).unwrap().is_whitespace() {
-                    key.insert(i, ' ');
-                }
-            }
-        );
+        // Strip all whitespace from the key
+        let key: String = key.to_lowercase().split_ascii_whitespace().collect();
+        println!("key without whitespace: {}", key);
         
-        // Rotate each character based on the ith key
-        text.chars().zip(key.chars()).map(|(c, k)| {
-            rotate_char(c, k.to_ascii_lowercase() as isize - 'a' as isize)
-        }).collect::<String>()
+        // If the key has length 0, panic!
+        if key.len() == 0 {
+            panic!("Key must not be empty");
+        }
+
+        // If the key has not alphabetic characters, panic!
+        if key.chars().any(|c| !c.is_ascii_alphabetic()) {
+            panic!("Key must only contain alphabetic characters");
+        }
+
+        let mut key_index = 0;
+        let cipher = text
+            .chars()
+            .map(|c| {
+                // If the character is a whitespace, return it
+                if !c.is_alphabetic() { return c }
+                // // Get the index of the character in the key
+                // let i = key.chars().position(|k| k == c).unwrap();
+                key_index += 1;
+                // Rotate the character based on the key
+                rotate_char(c, key.chars().collect::<Vec<char>>()[(key_index - 1) % key.len()] as isize - 'a' as isize)
+            }).collect();
+
+        println!("cipher: {}", cipher);
+        cipher
+
+        // // Rotate each character based on the ith key
+        // text.chars().zip(key.chars()).map(|(c, k)| {
+        //     rotate_char(c, k.to_ascii_lowercase() as isize - 'a' as isize)
+        // }).collect::<String>()
     }
 
     /// Decrypt a text using the Vernam cipher using the given key
