@@ -11,8 +11,8 @@ To install mirage, clone the repository and run the following command:
 
 ## Usage
 ```
-    mirage encrypt <caesar | vernam | vigenere> <key> <message>
-    mirage decrypt <caesar | vernam | vigenere> <key> <message>
+$ mirage encrypt <caesar | vernam | vigenere> <key> <message>
+$ mirage decrypt <caesar | vernam | vigenere> <key> <message>
 ```
 ```
 $ mirage --help
@@ -47,3 +47,6 @@ You can also decrypt if you have the key:
 $ mirage decrypt caesar "Khoor zruog!" 3
 Hello world!
 ```
+
+## Preview in Repl.it
+<iframe frameborder="0" width="100%" height="500px" src="https://replit.com/@vitoraqdev/mirage?lite=true"></iframe>
