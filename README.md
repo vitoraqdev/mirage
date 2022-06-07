@@ -6,17 +6,20 @@ such as Ciphers, Vernam and Vigenere.
 ## Installation
 
 To install mirage, clone the repository and run the following command:\
-`cargo build --release`\
+
+`$ cargo build --release`\
+
 Then to run mirage, run the following command:\
+
 `$ cargo run -- [ARGS]`
 
 ## Usage
 ```
-$ mirage encrypt <caesar | vernam | vigenere> <key> <message>
-$ mirage decrypt <caesar | vernam | vigenere> <key> <message>
+$ cargo run -- encrypt <caesar | vernam | vigenere> <key> <message>
+$ cargo run -- decrypt <caesar | vernam | vigenere> <key> <message>
 ```
 ```
-$ mirage --help
+$ cargo run -- --help
 mirage 0.1.0
 vitoraqdev
 A Very simple Encrypt and Decrypt program
@@ -39,13 +42,13 @@ SUBCOMMANDS:
 This uses the caesar cipher to encrypt the message "Hello World!" rotating by 3.
 
 ```
-$ mirage encrypt caesar "Hello world!" 3
+$ cargo run -- encrypt caesar "Hello world!" 3
 Khoor zruog!
 ```
 
 You can also decrypt if you have the key:
 ```
-$ mirage decrypt caesar "Khoor zruog!" 3
+$ cargo run -- decrypt caesar "Khoor zruog!" 3
 Hello world!
 ```
 
