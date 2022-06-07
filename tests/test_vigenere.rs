@@ -65,7 +65,7 @@ fn test_vigenere_encrypt_decrypt_with_special_characters() {
     assert_eq!(Vigenere::decrypt(ciphertext, key), plaintext);
 }
 #[test]
-fn test_vigenere_encrypt_decrypt_with_unicode() {
+fn test_vigenere_encrypt_decrypt_with_non_character() {
     let key = "key";
     let plaintext = "plaintext 料";
     let ciphertext = "zpysrrobr 料";
