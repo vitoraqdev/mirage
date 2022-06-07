@@ -1,13 +1,14 @@
 # mirage
 Simple encryption tool to encrypt and decrypt simple methods
-such as Vigenere, Vernam and Ceasar Ciphers.
+such as Ciphers, Vernam and Vigenere.
 
 
 ## Installation
 
-To install mirage, clone the repository and run the following command:
-`cargo build --release`
-
+To install mirage, clone the repository and run the following command:\
+`cargo build --release`\
+Then to run mirage, run the following command:\
+`$ cargo run -- [ARGS]`
 
 ## Usage
 ```
