@@ -61,17 +61,69 @@ impl Cryptography<&str> for Vernam {
 impl Cryptography<&str> for Vigenere {
     /// Encrypt a text using the Vigenere cipher using the given key
     fn encrypt(text: &str, key: &str) -> String {
-        let mut cipher = String::new();
+        // E_i = (P_i + K_i) % 26
+        // E_i = (P_i + K_(i % k.len())) % 26
+
+        // Strip all whitespace from the key
+        let key: String = key.to_lowercase().split_ascii_whitespace().collect();
+        println!("key without whitespace: {}", key);
+
+        // If the key has length 0, panic!
+        if key.len() == 0 {
+            panic!("Key must not be empty");
+        }
+
+        // If the key has not alphabetic characters, panic!
+        if key.chars().any(|c| !c.is_ascii_alphabetic()) {
+            panic!("Key must only contain alphabetic characters");
+        }
         
-        return cipher;
+        let mut key_index = 0;
+        let cipher = text
+            .chars()
+            .map(|c| {
+                // If the character is a whitespace, return it
+                if !c.is_alphabetic() { return c }
+                // // Get the index of the character in the key
+                // let i = key.chars().position(|k| k == c).unwrap();
+                key_index += 1;
+                // Rotate the character based on the key
+                rotate_char(c, key.chars().collect::<Vec<char>>()[(key_index - 1) % key.len()] as isize - 'a' as isize)
+            }).collect();
+
+        println!("cipher: {}", cipher);
+        cipher
+
     }
 
     /// Decrypt a text using the Vigenere cipher using the given key
     /// If not given the key, it will brute force it
     fn decrypt(text: &str, key: &str) -> String {
-        let mut cipher = String::new();
+    
+        // Strip all whitespace from the key
+        let key: String = key.to_lowercase().split_ascii_whitespace().collect();
+
+        // If the key has length 0, panic!
+        if key.len() == 0 {
+            panic!("Key must not be empty");
+        }
+
+        // If the key has not alphabetic characters, panic!
+        if key.chars().any(|c| !c.is_ascii_alphabetic()) {
+            panic!("Key must only contain alphabetic characters");
+        }
         
-        return cipher;
+        println!("old key: {}", key);
+        
+        println!("reduction {}", 26 - 2*(key.chars().nth(0).unwrap().to_ascii_lowercase() as isize - 'a' as isize));
+        // Calculate the negative rotation of the key
+        let key = key
+            .chars()
+            .inspect(|c| println!("{} = {}", c, c.to_ascii_lowercase() as isize - 'a' as isize))
+            .map(|c| rotate_char(c, 26 - 2*(c.to_ascii_lowercase() as isize - 'a' as isize)))
+            .collect::<String>();
+        println!("inverted key: {}", key);
+        Vigenere::encrypt(text, &key)
     }
 }
 
