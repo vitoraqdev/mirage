@@ -196,47 +196,56 @@ fn rotate_char(c: char, shift: isize) -> char {
     }
 }
 
-#[test]
-    fn test_rotate_char_by_zero() {
-        assert_eq!(rotate_char('a', 0), 'a');
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[cfg(test)]
+    mod tests_rotate_char {
+        use super::*;
+        
+        #[test]
+        fn test_rotate_char_by_zero() {
+            assert_eq!(rotate_char('a', 0), 'a');
+        }
+        #[test]
+        fn test_rotate_char_by_one() {
+            assert_eq!(rotate_char('a', 1), 'b');
+        }
+        #[test]
+        fn test_rotate_char_by_twenty_six() {
+            assert_eq!(rotate_char('a', 26), 'a');
+        }
+        #[test]
+        fn test_rotate_char_by_twenty_seven() {
+            assert_eq!(rotate_char('a', 27), 'b');
+        }
+        #[test]
+        fn test_rotate_uppercase_char_by_one() {
+            assert_eq!(rotate_char('A', 1), 'B');
+        }
+        #[test]
+        fn test_rotate_uppercase_char_by_twenty_six() {
+            assert_eq!(rotate_char('A', 26), 'A');
+        }
+        #[test]
+        fn test_rotate_uppercase_char_by_twenty_seven() {
+            assert_eq!(rotate_char('A', 27), 'B');
+        }
+        #[test]
+        fn test_rotate_char_by_negative_one() {
+            assert_eq!(rotate_char('a', -1), 'z');
+        }
+        #[test]
+        fn test_rotate_char_by_negative_twenty_seven() {
+            assert_eq!(rotate_char('a', -27), 'z');
+        }
+        #[test]
+        fn test_rotate_not_a_letter() {
+            assert_eq!(rotate_char('!', 1), '!');
+        }
+        #[test]
+        fn test_rotate_not_a_letter_2() {
+            assert_eq!(rotate_char('#', 1), '#');
+        }
     }
-    #[test]
-    fn test_rotate_char_by_one() {
-        assert_eq!(rotate_char('a', 1), 'b');
-    }
-    #[test]
-    fn test_rotate_char_by_twenty_six() {
-        assert_eq!(rotate_char('a', 26), 'a');
-    }
-    #[test]
-    fn test_rotate_char_by_twenty_seven() {
-        assert_eq!(rotate_char('a', 27), 'b');
-    }
-    #[test]
-    fn test_rotate_uppercase_char_by_one() {
-        assert_eq!(rotate_char('A', 1), 'B');
-    }
-    #[test]
-    fn test_rotate_uppercase_char_by_twenty_six() {
-        assert_eq!(rotate_char('A', 26), 'A');
-    }
-    #[test]
-    fn test_rotate_uppercase_char_by_twenty_seven() {
-        assert_eq!(rotate_char('A', 27), 'B');
-    }
-    #[test]
-    fn test_rotate_char_by_negative_one() {
-        assert_eq!(rotate_char('a', -1), 'z');
-    }
-    #[test]
-    fn test_rotate_char_by_negative_twenty_seven() {
-        assert_eq!(rotate_char('a', -27), 'z');
-    }
-    #[test]
-    fn test_rotate_not_a_letter() {
-        assert_eq!(rotate_char('!', 1), '!');
-    }
-    #[test]
-    fn test_rotate_not_a_letter_2() {
-        assert_eq!(rotate_char('#', 1), '#');
-    }
+}
