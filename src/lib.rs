@@ -97,7 +97,8 @@ impl Method for Vernam {
         // Calculate the negative rotation of the key
         let key = key
             .chars()
-            .inspect(|c| println!("{} = {}", c, c.to_ascii_lowercase() as isize - 'a' as isize))
+            .inspect(|c| self.logger.debug(
+                format!("{} = {}", c, c.to_ascii_lowercase() as isize - 'a' as isize)))
             .map(|c| 
             rotate_char(c, 26 - 2*(c.to_ascii_lowercase() as isize - 'a' as isize)))
             .collect::<String>();
