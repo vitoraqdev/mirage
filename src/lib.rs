@@ -16,7 +16,8 @@ impl Method for Caesar {
     }
     /// Encrypt a text using the Caesar cipher using the given shift
     fn encrypt(&self, text: &str, shift: &str) -> String {
-        self.logger.info(format!("Attempting to encrypt using Caesar: {} \n with a shift of {}", text, shift));
+        self.logger.info(format!("Attempting to encrypt using Caesar: {}", text));
+        self.logger.info(format!("With the shift: {}", shift));
 
         let shift = shift.parse::<isize>().unwrap();
 
@@ -25,7 +26,8 @@ impl Method for Caesar {
 
     /// Decrypt a text using the Vigenere cipher using the given key
     fn decrypt(&self, text: &str, shift: &str) -> String {
-        self.logger.info(format!("Attempting to decrypt using Caesar: {} \n with a shift of {}", text, shift));
+        self.logger.info(format!("Attempting to decrypt using Caesar: {}", text));
+        self.logger.info(format!("With the shift: {}", shift));
         
         // Invert the sign of the shift
         let shift = shift.parse::<isize>().unwrap();
@@ -43,7 +45,8 @@ impl Method for Vernam {
     }
     /// Encrypt a text using the Vernam cipher using the given key
     fn encrypt(&self, text: &str, key: &str) -> String {
-        self.logger.info(format!("Attempting to encrypt using Vernam {} \n with a key of {}", text, key));
+        self.logger.info(format!("Attempting to encrypt using Vernam: {}", text));
+        self.logger.info(format!("With the key: {}", key));
 
         let text_length = text.chars().filter(|c| c.is_ascii_alphabetic()).collect::<String>().len();
         let key_length = key.chars().filter(|c| c.is_ascii_alphabetic()).collect::<String>().len();
@@ -87,7 +90,8 @@ impl Method for Vernam {
 
     /// Decrypt a text using the Vernam cipher using the given key
     fn decrypt(&self, text: &str, key: &str) -> String {
-        self.logger.info(format!("Attempting to decrypt using Vernam {} \n with a key of {}", text, key));
+        self.logger.info(format!("Attempting to decrypt using Vernam: {}", text));
+        self.logger.info(format!("With the key: {}", key));
         self.logger.debug(format!("Reduction {}", 26 - 2*(key.chars().nth(0).unwrap().to_ascii_lowercase() as isize - 'a' as isize)));
         
         // Calculate the negative rotation of the key
@@ -112,7 +116,8 @@ impl Method for Vigenere {
 
     /// Encrypt a text using the Vigenere cipher using the given key
     fn encrypt(&self, text: &str, key: &str) -> String {
-        self.logger.info(format!("Attempting to encrypt using Vigenere {} \n with a key of {}", text, key));
+        self.logger.info(format!("Attempting to encrypt using Vigenere: {}", text));
+        self.logger.info(format!("With the key: {}", key));
 
         // Strip all whitespace from the key
         let key: String = key.to_lowercase().split_ascii_whitespace().collect();
@@ -148,7 +153,9 @@ impl Method for Vigenere {
 
     /// Decrypt a text using the Vigenere cipher using the given key
     fn decrypt(&self, text: &str, key: &str) -> String {
-    
+        self.logger.info(format!("Attempting to decrypt using Vigenere: {}", text));
+        self.logger.info(format!("With the key: {}", key));
+
         // Strip all whitespace from the key
         let key: String = key.to_lowercase().split_ascii_whitespace().collect();
 
