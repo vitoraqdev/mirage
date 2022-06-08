@@ -2,8 +2,9 @@ use clap::{Parser, Subcommand};
 use mirage::Caesar;
 use mirage::Vernam;
 use mirage::Vigenere;
-use mirage::Cryptography;
-mod logger;
+use mirage::Method;
+use mirage::logger::DummyLogger;
+
 
 #[derive(Parser, Debug)]
 #[clap(author = "vitoraqdev", version, about)]
@@ -47,32 +48,31 @@ enum Methods {
 
 fn main() {
     let args = Arguments::parse();
+    let logger = DummyLogger::new(args.verbosity);
     match args.command {
         Commands::Encrypt { command } => {
-            println!("Encrypting...");
             match command {
                 Methods::Vigenere { message, key } => {
-                    println!("{}", Vigenere::encrypt(&message, &key));
+                    println!("{}", Vigenere::new(logger).encrypt(&message, &key));
                 }
                 Methods::Vernam { message, key } => {
-                    println!("{}", Vernam::encrypt(&message, &key));
+                    println!("{}", Vernam::new(logger).encrypt(&message, &key));
                 }
                 Methods::Caesar { message, shift } => {
-                    println!("{}", Caesar::encrypt(&message, shift));
+                    println!("{}", Caesar::new(logger).encrypt(&message, shift.to_string().as_str()));
                 }
             }
         },
         Commands::Decrypt { command } => {
-            println!("Decrypting...");
             match command {
                 Methods::Vigenere { message, key } => {
-                    println!("{}", Vigenere::decrypt(&message, &key));
+                    println!("{}", Vigenere::new(logger).decrypt(&message, &key));
                 }
                 Methods::Vernam { message, key } => {
-                    println!("{}", Vernam::decrypt(&message, &key));
+                    println!("{}", Vernam::new(logger).decrypt(&message, &key));
                 }
                 Methods::Caesar { message, shift } => {
-                    println!("{}", Caesar::decrypt(&message, shift));
+                    println!("{}", Caesar::new(logger).decrypt(&message, shift.to_string().as_str()));
                 }
             }
         },

@@ -1,29 +1,53 @@
-pub struct Caesar;
-pub struct Vernam;
-pub struct Vigenere;
-pub trait Cryptography<T> {
-    fn encrypt(text: &str, key: T) -> String;
-    fn decrypt(text: &str, key: T) -> String;
+pub mod logger;
+use logger::DummyLogger;
+
+pub struct Caesar { logger: DummyLogger }
+pub struct Vernam { logger: DummyLogger }
+pub struct Vigenere { logger: DummyLogger }
+pub trait Method {
+    fn new(logger: logger::DummyLogger) -> Self;
+    fn encrypt(&self, text: &str, key: &str) -> String;
+    fn decrypt(&self, text: &str, key: &str) -> String;
 }
 
-impl Cryptography<isize> for Caesar {
+impl Method for Caesar {
+    fn new(logger: logger::DummyLogger) -> Self {
+        Caesar { logger }
+    }
     /// Encrypt a text using the Caesar cipher using the given shift
-    fn encrypt(text: &str, shift: isize) -> String {
+    fn encrypt(&self, text: &str, shift: &str) -> String {
+        self.logger.info(format!("Attempting to encrypt using Caesar: {} \n with a shift of {}", text, shift));
+
+        let shift = shift.parse::<isize>().unwrap();
+
         text.chars().map(|c| rotate_char(c, shift)).collect::<String>()
     }
 
     /// Decrypt a text using the Vigenere cipher using the given key
-    fn decrypt(text: &str, shift: isize) -> String {
-        Caesar::encrypt(text, -shift)
+    fn decrypt(&self, text: &str, shift: &str) -> String {
+        self.logger.info(format!("Attempting to decrypt using Caesar: {} \n with a shift of {}", text, shift));
+        
+        // Invert the sign of the shift
+        let shift = shift.parse::<isize>().unwrap();
+        let shift = (-shift).to_string();
+
+        // self.logger.debug(format!("Shift is {}", shift));
+        self.encrypt(text, shift.as_str())
     }
     
 }
 
-impl Cryptography<&str> for Vernam {
+impl Method for Vernam {
+    fn new(logger: logger::DummyLogger) -> Self {
+        Vernam { logger }
+    }
     /// Encrypt a text using the Vernam cipher using the given key
-    fn encrypt(text: &str, key: &str) -> String {
+    fn encrypt(&self, text: &str, key: &str) -> String {
+        self.logger.info(format!("Attempting to encrypt using Vernam {} \n with a key of {}", text, key));
+
         let text_length = text.chars().filter(|c| c.is_ascii_alphabetic()).collect::<String>().len();
         let key_length = key.chars().filter(|c| c.is_ascii_alphabetic()).collect::<String>().len();
+
         // If text and key are not the same size, panic!
         if text_length != key_length {
             panic!("Text and key must be the same size, \n\
@@ -33,7 +57,6 @@ impl Cryptography<&str> for Vernam {
         
         // Strip all whitespace from the key
         let key: String = key.to_lowercase().split_ascii_whitespace().collect();
-        println!("key without whitespace: {}", key);
         
         // If the key has length 0, panic!
         if key.len() == 0 {
@@ -58,38 +81,42 @@ impl Cryptography<&str> for Vernam {
                 rotate_char(c, key.chars().collect::<Vec<char>>()[(key_index - 1) % key.len()] as isize - 'a' as isize)
             }).collect();
 
-        println!("cipher: {}", cipher);
+        // self.logger.debug(format!("Cipher: {}", cipher));
         cipher
-
-        // // Rotate each character based on the ith key
-        // text.chars().zip(key.chars()).map(|(c, k)| {
-        //     rotate_char(c, k.to_ascii_lowercase() as isize - 'a' as isize)
-        // }).collect::<String>()
     }
 
     /// Decrypt a text using the Vernam cipher using the given key
-    fn decrypt(text: &str, key: &str) -> String {
-        println!("old key: {}", key);
-        println!("reduction {}", 26 - 2*(key.chars().nth(0).unwrap().to_ascii_lowercase() as isize - 'a' as isize));
+    fn decrypt(&self, text: &str, key: &str) -> String {
+        self.logger.info(format!("Attempting to decrypt using Vernam {} \n with a key of {}", text, key));
+        self.logger.debug(format!("Reduction {}", 26 - 2*(key.chars().nth(0).unwrap().to_ascii_lowercase() as isize - 'a' as isize)));
+        
         // Calculate the negative rotation of the key
-        let key = key.chars().inspect(|c| println!("{} = {}", c, c.to_ascii_lowercase() as isize - 'a' as isize)).map(|c| 
+        let key = key
+            .chars()
+            .inspect(|c| println!("{} = {}", c, c.to_ascii_lowercase() as isize - 'a' as isize))
+            .map(|c| 
             rotate_char(c, 26 - 2*(c.to_ascii_lowercase() as isize - 'a' as isize)))
             .collect::<String>();
-        println!("inverted key: {}", key);
-        Vernam::encrypt(text, &key)
+
+        // self.logger.debug(format!("Key: {}", key));
+
+        self.encrypt(text, &key)
     }
     
 }
 
-impl Cryptography<&str> for Vigenere {
+impl Method for Vigenere {
+    fn new(logger: logger::DummyLogger) -> Self {
+        Vigenere { logger }
+    }
+
     /// Encrypt a text using the Vigenere cipher using the given key
-    fn encrypt(text: &str, key: &str) -> String {
-        // E_i = (P_i + K_i) % 26
-        // E_i = (P_i + K_(i % k.len())) % 26
+    fn encrypt(&self, text: &str, key: &str) -> String {
+        self.logger.info(format!("Attempting to encrypt using Vigenere {} \n with a key of {}", text, key));
 
         // Strip all whitespace from the key
         let key: String = key.to_lowercase().split_ascii_whitespace().collect();
-        println!("key without whitespace: {}", key);
+        self.logger.debug(format!("Key without space: {}", key));
 
         // If the key has length 0, panic!
         if key.len() == 0 {
@@ -114,14 +141,13 @@ impl Cryptography<&str> for Vigenere {
                 rotate_char(c, key.chars().collect::<Vec<char>>()[(key_index - 1) % key.len()] as isize - 'a' as isize)
             }).collect();
 
-        println!("cipher: {}", cipher);
+        // self.logger.debug(format!("Vigenere cipher: {}", cipher));
         cipher
 
     }
 
     /// Decrypt a text using the Vigenere cipher using the given key
-    /// If not given the key, it will brute force it
-    fn decrypt(text: &str, key: &str) -> String {
+    fn decrypt(&self, text: &str, key: &str) -> String {
     
         // Strip all whitespace from the key
         let key: String = key.to_lowercase().split_ascii_whitespace().collect();
@@ -136,17 +162,18 @@ impl Cryptography<&str> for Vigenere {
             panic!("Key must only contain alphabetic characters");
         }
         
-        println!("old key: {}", key);
+        self.logger.debug(format!("Reduction {}", 26 - 2*(key.chars().nth(0).unwrap().to_ascii_lowercase() as isize - 'a' as isize)));
         
-        println!("reduction {}", 26 - 2*(key.chars().nth(0).unwrap().to_ascii_lowercase() as isize - 'a' as isize));
         // Calculate the negative rotation of the key
         let key = key
             .chars()
             .inspect(|c| println!("{} = {}", c, c.to_ascii_lowercase() as isize - 'a' as isize))
             .map(|c| rotate_char(c, 26 - 2*(c.to_ascii_lowercase() as isize - 'a' as isize)))
             .collect::<String>();
-        println!("inverted key: {}", key);
-        Vigenere::encrypt(text, &key)
+        
+        self.logger.debug(format!("Inverted key: {}", key));
+
+        self.encrypt(text, &key)
     }
 }
 
